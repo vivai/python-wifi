@@ -16,12 +16,15 @@ class Cell(object):
         return 'Cell(ssid={ssid})'.format(**vars(self))
 
     @classmethod
-    def all(cls, interface):
+    def all(cls, interface, use_root=False):
         """
         Returns a list of all cells extracted from the output of
         iwlist.
         """
-        iwlist_scan = subprocess.check_output(['/sbin/iwlist', interface, 'scan']).decode('utf-8')
+        if use_root:
+            iwlist_scan = subprocess.check_output(['sudo', '/sbin/iwlist', interface, 'scan']).decode('utf-8')
+        else:
+            iwlist_scan = subprocess.check_output(['/sbin/iwlist', interface, 'scan']).decode('utf-8')
 
         cells = map(normalize, cells_re.split(iwlist_scan)[1:])
 
